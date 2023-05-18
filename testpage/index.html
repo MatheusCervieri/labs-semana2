@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRUD Test Page</title>
+</head>
+<body>
+  <h1>CRUD Test Page</h1>
+
+  <h2>Create Item</h2>
+  <input type="text" id="nameInput" placeholder="Enter item name">
+  <button onclick="createItem()">Create</button>
+
+  <h2>Get Item by ID</h2>
+  <input type="text" id="getItemIdInput" placeholder="Enter item ID">
+  <button onclick="getItem()">Get</button>
+
+  <h2>Update Item by ID</h2>
+  <input type="text" id="updateItemIdInput" placeholder="Enter item ID">
+  <input type="text" id="updateItemNameInput" placeholder="Enter updated item name">
+  <button onclick="updateItem()">Update</button>
+
+  <h2>Delete Item by ID</h2>
+  <input type="text" id="deleteItemIdInput" placeholder="Enter item ID">
+  <button onclick="deleteItem()">Delete</button>
+
+  <h2>Response</h2>
+  <pre id="response"></pre>
+
+  <script>
+    // Define the endpoint URL variable
+    const id = "bpiextca11";
+    const endpointURL = 'http://localhost:4566/restapis/' + id + '/local/_user_request_';
+
+    function createItem() {
+      const name = document.getElementById('nameInput').value;
+      const data = { name };
+
+      fetch(`${endpointURL}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+
+    function getItem() {
+      const itemId = document.getElementById('getItemIdInput').value;
+
+      fetch(`${endpointURL}/items/${itemId}`)
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+
+    function updateItem() {
+      const itemId = document.getElementById('updateItemIdInput').value;
+      const name = document.getElementById('updateItemNameInput').value;
+      const data = { name };
+
+      fetch(`${endpointURL}/items/${itemId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+
+    function deleteItem() {
+      const itemId = document.getElementById('deleteItemIdInput').value;
+
+      fetch(`${endpointURL}/items/${itemId}`, {
+        method: 'DELETE'
+      })
+      .then(response => {
+        if (response.status === 204) {
+          document.getElementById('response').textContent = 'Item deleted successfully';
+        } else {
+          document.getElementById('response').textContent = 'Item not found';
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+    }
+  </script>
+</body>
+</html>
